@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceAI - Bilingual AI Voice Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Top Navigation Bar -->
+        <header class="navbar">
+            <div class="brand">
+                <div class="logo-orb">
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>VoiceAI</h1>
+                    <span>Bilingual AI Voice Assistant • द्विभाषी वॉइस असिस्टेंट</span>
+                </div>
+            </div>
+
+            <!-- Global Controls / Header Bar -->
+            <div class="header-controls">
+                <div class="control-pill provider-select-wrap">
+                    <label><i class="fas fa-brain"></i> AI Provider</label>
+                    <select id="aiProviderSelect">
+                        <option value="ollama" selected>Local Ollama</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+
+                <div class="control-pill model-select-wrap">
+                    <label><i class="fas fa-microchip"></i> Model</label>
+                    <select id="aiModelSelect">
+                        <option value="llama3.1:8b" selected>llama3.1:8b</option>
+                        <option value="qwen3.5:9b">qwen3.5:9b</option>
+                    </select>
+                </div>
+
+                <div class="control-pill lang-select-wrap">
+                    <label><i class="fas fa-language"></i> Language</label>
+                    <select id="appLanguageSelect">
+                        <option value="auto" selected>Auto Detect / स्वतः</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                    </select>
+                </div>
+
+                <div class="status-badge" id="systemStatusBadge">
+                    <span class="status-pulse"></span>
+                    <span id="systemStatusText">Ready</span>
+                </div>
+
+                <button class="theme-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area with Navigation Tabs -->
+        <main class="main-container">
+            <!-- Navigation Tabs (Only 2 tabs: Voice Assistant & Call Summarization) -->
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="voice-assistant-tab">
+                    <i class="fas fa-microphone-lines"></i>
+                    <span>Voice Assistant</span>
+                </button>
+                <button class="tab-btn" data-tab="call-summary-tab">
+                    <i class="fas fa-phone-volume"></i>
+                    <span>Call Summarization</span>
+                </button>
+            </nav>
+
+            <!-- 1. Voice Assistant Section -->
+            <section class="tab-content active" id="voice-assistant-tab">
+                <div class="voice-assistant-grid">
+                    <!-- Left: Interactive Voice Orb & Mic -->
+                    <div class="card voice-control-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-microphone"></i> Voice Conversation</h2>
+                            <span class="badge" id="micStatusBadge">Ready</span>
+                        </div>
+                        <div class="voice-hero">
+                            <div class="mic-orb-container">
+                                <div class="pulse-ring ring-1"></div>
+                                <div class="pulse-ring ring-2"></div>
+                                <div class="pulse-ring ring-3"></div>
+                                <button class="mic-orb-btn" id="micToggleBtn" title="Click to Start Listening">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            <div class="mic-state-label" id="micStateLabel">Click to Start Listening</div>
+                            <div class="audio-waveform-visual" id="waveformBarWrap">
+                                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                            </div>
+                        </div>
+
+                        <div class="voice-buttons">
+                            <button class="btn btn-primary" id="startListeningBtn">
+                                <i class="fas fa-play"></i> Start Listening
+                            </button>
+                            <button class="btn btn-danger" id="stopListeningBtn" disabled>
+                                <i class="fas fa-stop"></i> Stop Listening
+                            </button>
+                        </div>
+
+                        <!-- Manual Text Input fallback -->
+                        <div class="text-prompt-box">
+                            <input type="text" id="manualTextInput" placeholder="Type a message in English or हिन्दी...">
+                            <button class="btn-icon" id="sendTextBtn" title="Send text">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Transcription & Conversation History -->
+                    <div class="card conversation-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-comments"></i> Conversation History</h2>
+                            <div class="header-actions">
+                                <button class="btn-sm" id="sendToCallSummaryBtn" title="Send entire conversation to Call Summarization">
+                                    <i class="fas fa-share-from-square"></i> Send to Summary
+                                </button>
+                                <button class="btn-sm" id="replayLastAudioBtn" title="Replay Last Audio">
+                                    <i class="fas fa-volume-high"></i> Play Audio
+                                </button>
+                                <button class="btn-sm" id="clearHistoryBtn" title="Clear History">
+                                    <i class="fas fa-trash-can"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="conversation-stream" id="conversationStream">
+                            <div class="empty-state">
+                                <i class="fas fa-comment-dots"></i>
+                                <p>Press <strong>Start Listening</strong> or type a message to begin.</p>
+                                <span>आप अंग्रेज़ी या हिन्दी में बात कर सकते हैं।</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Call Summarization Section -->
+            <section class="tab-content" id="call-summary-tab">
+                <div class="call-summary-container">
+                    <!-- Top Call Recording Bar -->
+                    <div class="card call-action-card">
+                        <div class="call-action-left">
+                            <div class="call-status-indicator" id="callRecordingIndicator">
+                                <span class="rec-dot"></span>
+                                <span class="rec-text" id="callRecStatusText">Ready to Record Call</span>
+                            </div>
+                            <div class="call-timer" id="callTimerDisplay">00:00</div>
+                        </div>
+
+                        <div class="call-action-buttons">
+                            <button class="btn btn-success" id="startCallBtn">
+                                <i class="fas fa-phone"></i> Start Call
+                            </button>
+                            <button class="btn btn-danger" id="endCallBtn" disabled>
+                                <i class="fas fa-phone-slash"></i> End Call
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dual Column: Transcript on left, Summary on right -->
+                    <div class="call-content-grid">
+                        <!-- Left: Call Transcript Box -->
+                        <div class="card call-transcript-card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-file-lines"></i> Call Transcript</h2>
+                                <div class="header-actions">
+                                    <button class="btn-sm btn-outline" id="saveTranscriptBtn" title="Save Transcript to local file">
+                                        <i class="fas fa-floppy-disk"></i> Save File
+                                    </button>
+                                    <button class="btn-sm" id="downloadTranscriptBtn" disabled>
+                                        <i class="fas fa-download"></i> Download (TXT)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Saved call files dropdown -->
+                            <div class="saved-calls-bar">
+                                <label><i class="fas fa-folder-open"></i> Saved Call Files:</label>
+                                <select id="savedCallsSelect">
+                                    <option value="">-- Select a saved call text file --</option>
+                                </select>
+                            </div>
+
+                            <!-- Editable Transcript Box -->
+                            <div class="transcript-editor-wrap">
+                                <textarea id="callTranscriptTextarea" class="transcript-textarea" placeholder="Call transcript will appear here automatically when you end the call, or you can paste/type text here..."></textarea>
+                            </div>
+                            <div class="transcript-status-bar" id="transcriptStatusBar">
+                                <span><i class="fas fa-file-shield"></i> Stored in: <code>data/recordings/</code></span>
+                                <span id="charCountDisplay">0 characters</span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Summary Display Area -->
+                        <div class="card call-summary-card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-list-check"></i> Structured Call Summary</h2>
+                                <button class="btn-sm" id="downloadSummaryBtn" disabled>
+                                    <i class="fas fa-download"></i> Download Summary (TXT)
+                                </button>
+                            </div>
+
+                            <!-- Always-Visible Generate Summary Action Banner -->
+                            <div class="summary-control-banner" id="summaryControlBanner">
+                                <div class="banner-info">
+                                    <i class="fas fa-wand-magic-sparkles"></i>
+                                    <div>
+                                        <strong>Ready to analyze</strong>
+                                        <p>Click below to generate the 5-section AI summary.</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="generateSummaryBtn">
+                                    <i class="fas fa-wand-magic-sparkles"></i> Generate Summary
+                                </button>
+                            </div>
+
+                            <!-- Summary Content Area -->
+                            <div class="summary-body" id="callSummaryBody">
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-question"></i>
+                                    <p>Summary will appear here <strong>only</strong> after you click <strong>Generate Summary</strong>.</p>
+                                    <span>(1. Short Overview • 2. Discussion Points • 3. Decisions • 4. Action Items • 5. Follow-ups)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>VoiceAI • Local Ollama + Cloud Gemini • Faster-Whisper STT • Call Summarization (English & हिन्दी)</p>
+        </footer>
+    </div>
+
+    <!-- Hidden Audio Player for TTS -->
+    <audio id="ttsAudioPlayer" style="display:none;"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

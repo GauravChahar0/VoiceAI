@@ -1,0 +1,21 @@
+# Environment files
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+
+# Generated database
+data/chroma_db/
+
+# Call recordings
+data/recordings/
+
+# Dependencies
+node_modules/

@@ -1,0 +1,4 @@
+Customer: Hello, I want to inquire about renewing my maintenance contract.
+Agent: Hello! Yes, we can renew your contract today. The annual renewal fee is 5000 rupees.
+Customer: That sounds good. Please send the invoice to my email.
+Agent: Certainly, I will email the invoice by 3 PM and our team will follow up tomorrow.
