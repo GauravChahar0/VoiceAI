@@ -3,9 +3,11 @@
  * Controls Voice Assistant and Call Summarization (English & Hindi).
  */
 
-const API_BASE = window.location.protocol.startsWith("http")
+// Point to FastAPI backend on port 8000 even if frontend is served by VS Code Live Server (port 5500)
+const BACKEND_PORT = "8000";
+const API_BASE = (window.location.protocol.startsWith("http") && window.location.port === BACKEND_PORT)
     ? window.location.origin
-    : "http://127.0.0.1:8000";
+    : `http://${window.location.hostname && window.location.hostname !== "" ? window.location.hostname : "127.0.0.1"}:${BACKEND_PORT}`;
 
 // Global App State
 const state = {

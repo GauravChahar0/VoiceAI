@@ -1,8 +1,3 @@
-"""
-VoiceAI - Server Launcher
-Entry point to run the application on Windows.
-"""
-
 import os
 import sys
 

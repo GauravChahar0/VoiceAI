@@ -24,7 +24,7 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 DEFAULT_PROVIDER = os.getenv("AI_PROVIDER", "ollama")
 DEFAULT_OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
-DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
 
 class AIService:
@@ -53,10 +53,6 @@ class AIService:
         return ["llama3.1:8b", "qwen3.5:9b"]
 
     def detect_language(self, text: str) -> str:
-        """
-        Detect whether language is Hindi or English.
-        Checks for Devanagari script first, then common Hindi Romanized markers, then langdetect.
-        """
         if not text or not text.strip():
             return "en"
 
@@ -137,7 +133,7 @@ class AIService:
         last_err = None
         for endpoint in endpoints:
             try:
-                async with httpx.AsyncClient(timeout=120.0) as client:
+                async with httpx.AsyncClient(timeout=180.0) as client:
                     res = await client.post(
                         endpoint,
                         json={"model": model, "messages": messages, "stream": False}
